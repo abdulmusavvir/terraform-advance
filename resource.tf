@@ -5,10 +5,15 @@ variable "ami" {
     "us-east-1" : "ami-1234567890"
     "us-west-1" : "ami-0987654321"
   }
+
 }
 
 variable "region" {
   type = string
+  validation {
+    condition     = contains(["us-east-1", "us-west-1"], var.region)
+    error_message = "do not support other value than us-east-1 and us-west-1"
+  }
 
 }
 resource "aws_instance" "terraform-instance" {
