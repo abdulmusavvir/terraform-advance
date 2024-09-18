@@ -16,6 +16,10 @@ variable "region" {
   }
 }
 
+variable "server-name-and-count" {
+  type    = set(any)
+  default = ["test", "prod"]
+}
 
 variable "environment" {
   type    = string
@@ -31,6 +35,13 @@ variable "environment" {
 resource "aws_instance" "terraform-instance" {
   #   ami           = var.ami["${var.region}"]
   #   ami           = lookup(var.ami, var.region, "default-ami")
+  for_each      = var.server-name-and-count
   ami           = try(var.ami[var.region], "ami-default")
   instance_type = var.environment == "prod" ? "t2.large" : "t2.micro"
+  tags = {
+    # agar test environment ho toh test ke 2 server banege else prod ke 2 server banege
+    # name = var.environment == "prod" ? "webserver-prod" : "webserver-test"
+    # agar 2 server banana hai jo hum ne server-name-and-count mei dala hai then use following code
+    name = each.key
+  }
 }
