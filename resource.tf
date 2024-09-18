@@ -35,6 +35,7 @@ variable "environment" {
 resource "aws_instance" "terraform-instance" {
   #   ami           = var.ami["${var.region}"]
   #   ami           = lookup(var.ami, var.region, "default-ami")
+  # here we can use count meta argument also instead of for_each if we want to create 2 instance count = 2
   for_each      = var.server-name-and-count
   ami           = try(var.ami[var.region], "ami-default")
   instance_type = var.environment == "prod" ? "t2.large" : "t2.micro"
